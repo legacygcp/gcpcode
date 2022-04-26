@@ -1,39 +1,36 @@
-apiVersion: apps/v1
-kind: Deployment
+apiVersion: v1
+kind: ReplicationController
 metadata:
-  name: selenium-hub
+  name: selenium-hub 
   labels:
-    app: selenium-hub
+    name: selenium-hub
 spec:
   replicas: 1
   selector:
-    matchLabels:
-      app: selenium-hub
+    name: selenium-hub
   template:
     metadata:
       labels:
-        app: selenium-hub
+        name: selenium-hub
     spec:
       containers:
       - name: selenium-hub
-        image: selenium/hub
+        image: selenium/hub:2.47.1 
         ports:
-          - containerPort: 4444
-          - containerPort: 4443
-          - containerPort: 4442
+          - containerPort: 4444 
         resources:
           limits:
             memory: "1000Mi"
             cpu: "1"
         livenessProbe:
           httpGet:
-            path: /wd/hub/status
+            path: /grid/console
             port: 4444
           initialDelaySeconds: 30
           timeoutSeconds: 5
         readinessProbe:
           httpGet:
-            path: /wd/hub/status
+            path: /grid/console
             port: 4444
           initialDelaySeconds: 30
           timeoutSeconds: 5
