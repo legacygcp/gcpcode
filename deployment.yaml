@@ -1,0 +1,113 @@
+---
+# Source: zalenium/templates/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: vault-zalenium
+  labels:
+    role: grid
+    app: zalenium
+    chart: zalenium-3.141.59
+    release: vault
+    heritage: Helm
+    app.kubernetes.io/name: zalenium
+    helm.sh/chart: zalenium-3.141.59
+    app.kubernetes.io/instance: vault
+    app.kubernetes.io/managed-by: Helm
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: zalenium
+      app.kubernetes.io/instance: vault
+  template:
+    metadata:
+      labels:
+        role: grid
+        app: zalenium
+        chart: zalenium-3.141.59
+        release: vault
+        heritage: Helm
+        app.kubernetes.io/name: zalenium
+        helm.sh/chart: zalenium-3.141.59
+        app.kubernetes.io/instance: vault
+        app.kubernetes.io/managed-by: Helm
+      annotations:
+        {}
+    spec:
+    
+      securityContext:
+        {}
+      volumes:
+        - name: vault-zalenium-videos
+          emptyDir: {}
+        - name: vault-zalenium-data
+          emptyDir: {}
+      containers:
+        - name: zalenium
+          image: "dosel/zalenium:latest"
+          imagePullPolicy: IfNotPresent
+          securityContext:
+            {}
+          ports:
+            - containerPort: 4444
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /status
+              port: 4444
+            initialDelaySeconds: 90
+            periodSeconds: 5
+            timeoutSeconds: 1
+          readinessProbe:
+            httpGet:
+              path: /status
+              port: 4444
+            timeoutSeconds: 1
+          env:
+            - name: ZALENIUM_KUBERNETES_CPU_REQUEST
+              value: "250m"
+            - name: ZALENIUM_KUBERNETES_CPU_LIMIT
+              value: "1000m"
+            - name: ZALENIUM_KUBERNETES_MEMORY_REQUEST
+              value: "500Mi"
+            - name: ZALENIUM_KUBERNETES_MEMORY_LIMIT
+              value: "2Gi"
+            - name: DESIRED_CONTAINERS
+              value: "2"
+            - name: MAX_DOCKER_SELENIUM_CONTAINERS
+              value: "10"
+            - name: SELENIUM_IMAGE_NAME
+              value: "elgalu/selenium"
+            - name: VIDEO_RECORDING_ENABLED
+              value: "true"
+            - name: SCREEN_WIDTH
+              value: "1440"
+            - name: SCREEN_HEIGHT
+              value: "900"
+            - name: MAX_TEST_SESSIONS
+              value: "1"
+            - name: NEW_SESSION_WAIT_TIMEOUT
+              value: "600000"
+            - name: DEBUG_ENABLED
+              value: "false"
+            - name: SEND_ANONYMOUS_USAGE_INFO
+              value: "true"
+            - name: TZ
+              value: "UTC"
+            - name: KEEP_ONLY_FAILED_TESTS
+              value: "false"
+            - name: RETENTION_PERIOD
+              value: "3"
+          args:
+            - start
+          resources:
+            requests:
+              cpu: 500m
+              memory: 500Mi
+          volumeMounts:
+            - name: vault-zalenium-videos
+              mountPath: /home/seluser/videos
+            - name: vault-zalenium-data
+              mountPath: /tmp/mounted
+      serviceAccountName: vault-zalenium

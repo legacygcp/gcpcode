@@ -1,0 +1,23 @@
+---
+# Source: zalenium/templates/role-binding.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: "RoleBinding"
+metadata:
+  name: vault-zalenium
+  labels:
+    role: grid
+    app: zalenium
+    chart: zalenium-3.141.59
+    release: vault
+    heritage: Helm
+    app.kubernetes.io/name: zalenium
+    helm.sh/chart: zalenium-3.141.59
+    app.kubernetes.io/instance: vault
+    app.kubernetes.io/managed-by: Helm
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: "Role"
+  name: vault-zalenium
+subjects:
+- kind: ServiceAccount
+  name: vault-zalenium

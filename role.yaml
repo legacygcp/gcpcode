@@ -1,0 +1,37 @@
+---
+# Source: zalenium/templates/role.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: "Role"
+metadata:
+  name: vault-zalenium
+  labels:
+    role: grid
+    app: zalenium
+    chart: zalenium-3.141.59
+    release: vault
+    heritage: Helm
+    app.kubernetes.io/name: zalenium
+    helm.sh/chart: zalenium-3.141.59
+    app.kubernetes.io/instance: vault
+    app.kubernetes.io/managed-by: Helm
+rules:
+- apiGroups:
+  - ""
+  attributeRestrictions: null
+  resources:
+  - pods
+  verbs:
+  - create
+  - delete
+  - deletecollection
+  - get
+  - list
+  - watch
+- apiGroups:
+  - ""
+  attributeRestrictions: null
+  resources:
+  - pods/exec
+  verbs:
+  - create
+  - get
